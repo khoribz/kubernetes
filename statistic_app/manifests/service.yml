@@ -11,9 +11,4 @@ spec:
     port: 80
     targetPort: 80
     nodePort: 30080
-  - name: health
-    protocol: TCP
-    port: 4000
-    targetPort: 4000
-    nodePort: 30400
   type: NodePort

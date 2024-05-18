@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 
+import aiohttp
 from aiohttp import web
 
 from src.common.enums import Endpoint, Method
@@ -49,7 +50,18 @@ class HTTPServer:
         return web.Response(status=status_code)
 
     async def get_current_time(self, request: web.Request) -> web.Response:
-        current_time = datetime.utcnow()
+        try:
+            async with aiohttp.ClientSession() as session:
+                url = f'http://worldtimeapi.org/api/timezone/Europe/Moscow'
+                logging.info(f'request GET by {url=}')
+                async with session.get(url=url) as response:
+                    logging.info(f'got {response=}')
+                    statistics = await response.json()
+                    current_time = datetime.fromisoformat(statistics['utc_datetime'])
+        except Exception as e:
+            logger.error(e)
+            raise
+
         await self.db_manager.insert_request(
             method=request.method,
             endpoint=request.path,

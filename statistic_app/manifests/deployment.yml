@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: khoribz/app:latest
+        image: khoribz/app:v1
         ports:
         - containerPort: 80
         - containerPort: 4000

@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+  labels:
+    app: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+      - name: app
+        image: khoribz/app:latest
+        ports:
+        - containerPort: 80
+        - containerPort: 4000
+        env:
+        - name: POSTGRESQL_HOST
+          value: "postgres-service"
+        - name: POSTGRESQL_PORT
+          value: "5432"
+        - name: POSTGRESQL_DATABASE
+          value: "statistics_app"
+        - name: POSTGRES_USER
+          value: "postgres"
+        - name: POSTGRES_PASSWORD
+          value: "postgres"
+        livenessProbe:
+          httpGet:
+            path: /ping/app
+            port: 4000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /ping/app
+            port: 4000
+          initialDelaySeconds: 5
+          periodSeconds: 5
